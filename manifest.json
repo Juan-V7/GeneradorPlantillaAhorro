@@ -1,0 +1,16 @@
+{
+  "name": "Generador de Plantilla de Ahorro Programado",
+  "short_name": "AhorroProgramado",
+  "description": "Planifica tus metas de ahorro a medida, calcula cuotas exactas, gestiona recordatorios y exporta tus cronogramas.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#059669",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

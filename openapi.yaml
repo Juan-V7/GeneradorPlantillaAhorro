@@ -1,0 +1,183 @@
+openapi: 3.1.0
+info:
+  title: GeneradorPlantillaAhorro API & Data Contracts
+  version: 1.0.0
+  description: >-
+    Especificación de contratos de datos y endpoints del servidor para la aplicación
+    de planificación de ahorro programado a medida.
+servers:
+  - url: http://localhost:3000
+    description: Servidor de desarrollo local
+
+paths:
+  /health:
+    get:
+      summary: Verificación de estado y salud del servicio (Healthcheck)
+      description: Retorna el estado operativo, tiempo de actividad y marca de tiempo.
+      responses:
+        '200':
+          description: Servicio saludable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /api/v1/info:
+    get:
+      summary: Información descriptiva del servicio
+      description: Retorna el nombre, versión y propósito del generador de ahorro.
+      responses:
+        '200':
+          description: Información del sistema
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: GeneradorPlantillaAhorro
+                  version:
+                    type: string
+                    example: 1.0.0
+                  status:
+                    type: string
+                    example: active
+
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - uptime
+        - timestamp
+      properties:
+        status:
+          type: string
+          example: healthy
+        uptime:
+          type: number
+          description: Segundos transcurridos desde el inicio del proceso
+          example: 124.52
+        timestamp:
+          type: string
+          format: date-time
+          example: '2026-11-09T17:00:00.000Z'
+
+    Installment:
+      type: object
+      required:
+        - number
+        - amount
+        - dueDate
+        - isPaid
+        - cumulativeTarget
+      properties:
+        number:
+          type: integer
+          description: Número ordinal de la cuota (inicia en 1)
+          example: 1
+        amount:
+          type: number
+          format: float
+          description: Monto periódico a abonar en esta cuota
+          example: 200.00
+        dueDate:
+          type: string
+          format: date
+          description: Fecha de cobro límite en formato YYYY-MM-DD
+          example: '2026-06-15'
+        isPaid:
+          type: boolean
+          description: Indica si la cuota ya fue abonada
+          example: false
+        paidAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Fecha y hora en la que se registró el abono
+          example: '2026-06-14T15:30:00.000Z'
+        cumulativeTarget:
+          type: number
+          format: float
+          description: Monto total acumulado esperado al completar esta cuota
+          example: 200.00
+        notes:
+          type: string
+          description: Anotaciones personales sobre el pago
+          example: 'Pagado con prima de mitad de año'
+
+    SavingsPlan:
+      type: object
+      required:
+        - id
+        - title
+        - targetAmount
+        - termValue
+        - termUnit
+        - frequency
+        - startDate
+        - endDate
+        - currency
+        - totalInstallments
+        - installments
+      properties:
+        id:
+          type: string
+          description: Identificador único del plan
+          example: plan_1773000000_abc12
+        title:
+          type: string
+          description: Nombre descriptivo de la meta de ahorro
+          example: Fondo de Emergencia
+        targetAmount:
+          type: number
+          format: float
+          description: Monto total objetivo
+          example: 1200.00
+        termValue:
+          type: integer
+          description: Cantidad de periodos del plazo
+          example: 6
+        termUnit:
+          type: string
+          enum: [meses, semanas]
+          example: meses
+        frequency:
+          type: string
+          enum: [semanal, quincenal, mensual]
+          example: quincenal
+        startDate:
+          type: string
+          format: date
+          example: '2026-06-01'
+        endDate:
+          type: string
+          format: date
+          example: '2026-11-16'
+        currency:
+          type: string
+          example: '$'
+        totalInstallments:
+          type: integer
+          example: 12
+        standardAmount:
+          type: number
+          format: float
+          example: 100.00
+        lastInstallmentAmount:
+          type: number
+          format: float
+          description: Monto con ajuste exacto de céntimos para cuadrar al centavo
+          example: 100.00
+        installments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Installment'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
