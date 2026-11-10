@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # GeneradorPlantillaAhorro 💰🌱
 
 > Aplicación web moderna, accesible y local-first para planificar metas de ahorro programado a medida, desglosar cuotas exactas, dar seguimiento visual interactivo y programar recordatorios de cobro.
@@ -146,3 +147,7 @@ El archivo [`openapi.yaml`](openapi.yaml) define el esquema de los planes de aho
 ## 🛡️ Licencia
 
 Distribuido bajo la Licencia MIT.
+=======
+# GeneradorPlantillaAhorro
+
+>>>>>>> 5670ad635d536ea0e40a7ca073eb19aeb02ebec0
