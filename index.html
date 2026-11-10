@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador de Plantillas de Ahorro Programado</title>
+  <meta name="description" content="Planifica tus metas de ahorro a medida, calcula cuotas exactas, gestiona recordatorios y exporta tus cronogramas de pago.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>">
+</head>
+<body>
+  <!-- Salto accesible al contenido principal -->
+  <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+  <!-- Anuncios accesibles para lectores de pantalla -->
+  <div id="sr-announcements" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;" aria-live="polite"></div>
+
+  <!-- Cabecera de la aplicación -->
+  <header class="app-header" role="banner">
+    <div class="header-container">
+      <div class="brand-wrapper">
+        <span class="brand-icon" aria-hidden="true">🌱</span>
+        <div>
+          <h1 class="brand-title">Generador de Plantilla de Ahorro (COP)</h1>
+          <p class="brand-subtitle">Planificación de metas de ahorro en Pesos Colombianos &bull; Cuotas y recordatorios</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <!-- Selector de Tema Claro/Oscuro -->
+        <button id="btn-toggle-theme" class="btn btn-outline-white btn-sm" aria-label="Cambiar a tema oscuro" title="Cambiar tema">
+          <span id="theme-icon" aria-hidden="true">🌙</span>
+          <span id="theme-text">Modo Oscuro</span>
+        </button>
+        <!-- Modal de Copias de Seguridad -->
+        <button id="btn-open-backup" class="btn btn-outline-white btn-sm" aria-label="Abrir gestor de copias de seguridad">
+          <span aria-hidden="true">💾</span>
+          <span>Copias de Respaldo</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenido principal -->
+  <main id="main-content" class="main-layout" role="main">
+
+    <!-- Barra de Selección de Plan Activo -->
+    <section class="plan-selector-bar" aria-label="Selección de planes de ahorro guardados">
+      <label for="plan-select" style="font-weight: 600; font-size: 0.9rem;">
+        <span aria-hidden="true">📂</span> Plan Actual:
+      </label>
+      <select id="plan-select" class="form-control plan-select-input" aria-label="Seleccionar plan de ahorro activo">
+        <option value="" disabled selected>Cargando planes...</option>
+      </select>
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <button id="btn-new-plan-prompt" class="btn btn-primary btn-sm" title="Crear un nuevo plan">
+          <span aria-hidden="true">➕</span> Nueva Meta
+        </button>
+        <button id="btn-duplicate-plan" class="btn btn-outline btn-sm" title="Duplicar este plan para empezar otro">
+          <span aria-hidden="true">📑</span> Duplicar
+        </button>
+        <button id="btn-delete-plan" class="btn btn-outline btn-sm" style="color: var(--color-danger);" title="Eliminar este plan">
+          <span aria-hidden="true">🗑️</span> Eliminar
+        </button>
+      </div>
+    </section>
+
+    <!-- Disposición del Tablero: Formulario (Izquierda) + Cronograma y Métricas (Derecha) -->
+    <div class="dashboard-grid">
+
+      <!-- Formulario de Configuración de Ahorro -->
+      <aside aria-label="Configuración de la meta de ahorro">
+        <div class="card">
+          <h2 class="card-title">
+            <span aria-hidden="true">🎯</span> Definir Meta
+          </h2>
+          <form id="savings-form" novalidate>
+            <!-- Título de la meta -->
+            <div class="form-group">
+              <label for="plan-title" class="form-label">
+                Nombre de la meta <span class="required" aria-hidden="true">*</span>
+              </label>
+              <input type="text" id="plan-title" class="form-control" placeholder="Ej: Fondo de Emergencia, Vacaciones" required maxlength="60">
+              <span id="error-title" class="form-error" role="alert">Ingresa un nombre descriptivo para tu meta.</span>
+            </div>
+
+            <!-- Monto Objetivo y Moneda (Exclusivo Pesos Colombianos COP) -->
+            <div class="form-row">
+              <div class="form-group" style="flex: 2;">
+                <label for="plan-target" class="form-label">
+                  Monto Objetivo en COP <span class="required" aria-hidden="true">*</span>
+                </label>
+                <div style="display: flex; align-items: center; gap: 0.35rem;">
+                  <span style="font-weight: 800; color: var(--color-primary); font-size: 1.1rem;" aria-hidden="true">$</span>
+                  <input type="number" id="plan-target" class="form-control" placeholder="Ej: 2000000" min="1000" step="100" required>
+                </div>
+                <span id="error-target" class="form-error" role="alert">El monto debe ser mayor a 0 en pesos colombianos.</span>
+                <div class="form-hint">Monto en Pesos Colombianos (COP)</div>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="plan-currency" class="form-label">Moneda</label>
+                <input type="text" id="plan-currency" class="form-control" value="$ COP" readonly style="background-color: var(--bg-card-subtle); font-weight: 700; color: var(--color-primary); cursor: not-allowed;" title="Configurado exclusivamente en Pesos Colombianos (COP)" aria-label="Moneda fija: Pesos Colombianos">
+              </div>
+            </div>
+
+
+            <!-- Plazo y Unidad -->
+            <div class="form-row">
+              <div class="form-group" style="flex: 1;">
+                <label for="plan-term-value" class="form-label">
+                  Plazo total <span class="required" aria-hidden="true">*</span>
+                </label>
+                <input type="number" id="plan-term-value" class="form-control" placeholder="Ej: 6" min="1" max="360" required>
+                <span id="error-term" class="form-error" role="alert">Indica un plazo mayor a 0.</span>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="plan-term-unit" class="form-label">Unidad</label>
+                <select id="plan-term-unit" class="form-control">
+                  <option value="meses" selected>Meses</option>
+                  <option value="semanas">Semanas</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Periodicidad de las cuotas -->
+            <div class="form-group">
+              <label for="plan-frequency" class="form-label">
+                Frecuencia de ahorro <span class="required" aria-hidden="true">*</span>
+              </label>
+              <select id="plan-frequency" class="form-control">
+                <option value="mensual" selected>Mensual (1 cuota por mes)</option>
+                <option value="quincenal">Quincenal (cada 14 días / 2 al mes)</option>
+                <option value="semanal">Semanal (cada 7 días)</option>
+              </select>
+              <div class="form-hint">Determinamos el número exacto de aportes y su monto periódico.</div>
+            </div>
+
+            <!-- Fecha de inicio -->
+            <div class="form-group">
+              <label for="plan-start-date" class="form-label">
+                Fecha del primer aporte <span class="required" aria-hidden="true">*</span>
+              </label>
+              <input type="date" id="plan-start-date" class="form-control" required>
+              <span id="error-date" class="form-error" role="alert">Selecciona una fecha válida.</span>
+            </div>
+
+            <!-- Botón Generar -->
+            <button type="submit" id="btn-submit-plan" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+              <span aria-hidden="true">⚡</span>
+              <span>Calcular y Generar Plantilla</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Módulo de Notificaciones y Recordatorios -->
+        <div class="card" id="notifications-box">
+          <h2 class="card-title">
+            <span aria-hidden="true">🔔</span> Alertas y Recordatorios
+          </h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+            No olvides ningún abono. Activa alertas web en este navegador o sincroniza las fechas con tu calendario personal.
+          </p>
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <button id="btn-request-notifications" class="btn btn-outline btn-sm">
+              <span id="notification-icon" aria-hidden="true">🔔</span>
+              <span id="notification-label">Activar alertas en navegador</span>
+            </button>
+            <button id="btn-download-ics" class="btn btn-outline btn-sm" title="Descargar archivo .ics compatible con Google Calendar, Apple y Outlook">
+              <span aria-hidden="true">📅</span>
+              <span>Sincronizar Calendario (.ics)</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Panel de Seguimiento Interactivo (Derecha) -->
+      <section id="plan-details-section" aria-label="Cronograma de seguimiento de ahorro">
+
+        <!-- Mensaje de Estado Vacío (se oculta cuando hay un plan activo) -->
+        <div id="empty-state-view" class="empty-state">
+          <div class="empty-state-icon" aria-hidden="true">💡</div>
+          <h2 class="empty-state-title">Comienza tu primera meta de ahorro</h2>
+          <p class="empty-state-desc">
+            Define tu monto objetivo, el plazo y la periodicidad en el formulario de la izquierda. El sistema calculará automáticamente tus cuotas exactas, fechas de cobro y tabla de progreso.
+          </p>
+          <button id="btn-empty-focus" class="btn btn-primary">
+            <span aria-hidden="true">✍️</span> Comenzar ahora
+          </button>
+        </div>
+
+        <!-- Vista activa del Plan -->
+        <div id="active-plan-view" style="display: none;">
+
+          <!-- Contenedor de Alertas Próximas o Vencidas -->
+          <div id="alerts-wrapper" class="alerts-container" aria-live="polite"></div>
+
+          <!-- Métricas del Plan -->
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <span class="metric-label">Ahorrado</span>
+              <span id="metric-saved" class="metric-value">$ 0.00</span>
+              <span id="metric-saved-sub" class="metric-sub">0 de 0 cuotas</span>
+            </div>
+            <div class="metric-card secondary">
+              <span class="metric-label">Saldo Pendiente</span>
+              <span id="metric-remaining" class="metric-value">$ 0.00</span>
+              <span id="metric-target-sub" class="metric-sub">Meta: $ 0.00</span>
+            </div>
+            <div class="metric-card warning">
+              <span class="metric-label">Próximo Pago</span>
+              <span id="metric-next-amount" class="metric-value">$ 0.00</span>
+              <span id="metric-next-date" class="metric-sub">Sin pagos pendientes</span>
+            </div>
+            <div class="metric-card info">
+              <span class="metric-label">Fecha Límite</span>
+              <span id="metric-end-date" class="metric-value">--/--/----</span>
+              <span id="metric-frequency-sub" class="metric-sub">Periodicidad</span>
+            </div>
+          </div>
+
+          <!-- Barra de Progreso -->
+          <div class="card" style="padding: 1rem;">
+            <div class="progress-header">
+              <span>Progreso de la Meta</span>
+              <span id="progress-text">0%</span>
+            </div>
+            <div class="progress-bar-track">
+              <div id="progress-bar-fill" class="progress-bar-fill" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </div>
+
+          <!-- Barra de Herramientas de la Tabla -->
+          <div class="table-toolbar">
+            <div class="toolbar-group">
+              <button id="btn-pay-next" class="btn btn-primary btn-sm" title="Abonar la siguiente cuota cronológica">
+                <span aria-hidden="true">✅</span> Pagar Siguiente Cuota
+              </button>
+              <button id="btn-mark-all-paid" class="btn btn-outline btn-sm" title="Marcar todo como abonado">
+                <span>Marcar Todas</span>
+              </button>
+              <button id="btn-mark-all-unpaid" class="btn btn-outline btn-sm" title="Reiniciar marcas de pago">
+                <span>Desmarcar Todas</span>
+              </button>
+            </div>
+            <div class="toolbar-group">
+              <button id="btn-export-csv" class="btn btn-outline btn-sm" title="Descargar como archivo CSV para Excel">
+                <span aria-hidden="true">📊</span> CSV (Excel)
+              </button>
+              <button id="btn-export-json" class="btn btn-outline btn-sm" title="Descargar datos en JSON">
+                <span aria-hidden="true">📦</span> JSON
+              </button>
+              <button id="btn-print" class="btn btn-outline btn-sm" title="Imprimir o guardar en PDF">
+                <span aria-hidden="true">🖨️</span> Imprimir / PDF
+              </button>
+              <button id="btn-share-summary" class="btn btn-outline btn-sm" title="Copiar resumen para WhatsApp">
+                <span aria-hidden="true">📋</span> Copiar Resumen
+              </button>
+            </div>
+          </div>
+
+          <!-- Tabla de Cronograma de Ahorro (Desktop & Tablets) -->
+          <div class="table-responsive" tabindex="0" aria-label="Tabla de cronograma de cuotas de ahorro con scroll horizontal si es necesario">
+            <table class="installments-table" id="installments-table">
+              <caption style="text-align: left; padding: 0.5rem; font-weight: 600; color: var(--text-muted); font-size: 0.85rem;">
+                Cronograma detallado de cuotas y fechas de cobro
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col" style="width: 45px; text-align: center;">Abono</th>
+                  <th scope="col" style="width: 60px;">#</th>
+                  <th scope="col">Fecha Límite</th>
+                  <th scope="col">Monto Periódico</th>
+                  <th scope="col">Acumulado Esperado</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Notas</th>
+                </tr>
+              </thead>
+              <tbody id="installments-table-body">
+                <!-- Generado dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Vista alternativa para Pantallas Móviles Pequeñas -->
+          <div class="mobile-cards-view" id="installments-cards-view" aria-label="Lista de cuotas en formato tarjetas móviles">
+            <!-- Generado dinámicamente -->
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Modal: Copias de Respaldo e Importación -->
+  <div id="backup-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="backup-modal-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="backup-modal-title" class="modal-title">Gestión de Copias de Respaldo</h3>
+        <button id="btn-close-backup" class="modal-close-btn" aria-label="Cerrar modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.9rem; color: var(--text-muted);">
+          Tus planes se guardan localmente en este navegador. Puedes exportar una copia de seguridad en JSON para restaurarla en otro equipo o dispositivo.
+        </p>
+
+        <div style="margin-bottom: 1.25rem;">
+          <h4 style="font-size: 0.95rem; margin-bottom: 0.4rem;">Exportar todas mis metas:</h4>
+          <button id="btn-download-backup-json" class="btn btn-secondary btn-sm" style="width: 100%;">
+            <span aria-hidden="true">📥</span> Descargar Copia Completa (JSON)
+          </button>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1rem 0;">
+
+        <div>
+          <h4 style="font-size: 0.95rem; margin-bottom: 0.4rem;">Restaurar desde archivo JSON:</h4>
+          <input type="file" id="backup-file-input" accept=".json,application/json" class="form-control" style="font-size: 0.85rem;">
+          <button id="btn-execute-restore" class="btn btn-outline btn-sm" style="width: 100%; margin-top: 0.5rem;" disabled>
+            <span aria-hidden="true">📤</span> Restaurar Archivo
+          </button>
+          <div id="restore-status" style="font-size: 0.8rem; margin-top: 0.5rem; display: none;"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-modal-done" class="btn btn-outline btn-sm">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor de Toast / Notificaciones flotantes -->
+  <div id="toast-container" class="toast-container" aria-live="assertive"></div>
+
+  <!-- Pie de página -->
+  <footer class="app-footer" role="contentinfo">
+    <p>
+      <strong>GeneradorPlantillaAhorro</strong> &bull; Sistema modular y accesible de planificación financiera programada.
+    </p>
+    <p style="margin-top: 0.25rem; font-size: 0.75rem;">
+      Tus datos se guardan de forma privada en tu dispositivo (Local-First).
+    </p>
+  </footer>
+
+  <!-- Script principal de la aplicación -->
+  <script type="module" src="src/ui/app.js"></script>
+</body>
+</html>

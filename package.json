@@ -1,0 +1,23 @@
+{
+  "name": "generador-plantilla-ahorro",
+  "version": "1.0.0",
+  "description": "Aplicación web accesible y modular para planificar metas de ahorro programado a medida.",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test tests/*.test.js"
+  },
+  "keywords": [
+    "ahorro",
+    "finanzas-personales",
+    "planificador",
+    "calculadora",
+    "local-first"
+  ],
+  "author": "Antigravity Assistant",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
