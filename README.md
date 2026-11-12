@@ -65,7 +65,8 @@ GeneradorPlantillaAhorro/
 ├── Dockerfile                   # Imagen multi-stage sin privilegios (node) con healthcheck
 ├── .dockerignore                # Optimización de contexto Docker
 ├── package.json                 # Scripts de prueba y arranque
-└── SKILLS.md                    # Especificación técnica base
+├── SKILLS.md                    # Especificación técnica base generada con SkillNeitor
+└── RELACION_SKILLNEITOR_GITNEITOR.md # Documentación técnica del flujo SkillNeitor y GitNeitor
 ```
 
 ---
@@ -140,6 +141,24 @@ npm test
 ## 📄 Contrato de Datos (OpenAPI)
 
 El archivo [`openapi.yaml`](openapi.yaml) define el esquema de los planes de ahorro (`SavingsPlan`), cuotas (`Installment`), métricas y los endpoints de verificación del servidor.
+
+---
+
+## 📚 Documentación del Proceso
+
+Para consultar el análisis técnico detallado sobre cómo se estructuró, construyó y versionó este proyecto mediante la integración de **SkillNeitor** y **GitNeitor**, consulta:
+👉 **[Documentación Técnica: Relación entre SkillNeitor y GitNeitor](./RELACION_SKILLNEITOR_GITNEITOR.md)**
+
+### Resumen del Flujo de Trabajo:
+- **SkillNeitor**: Suministró la especificación formal en [`SKILLS.md`](./SKILLS.md), a partir de la cual se implementaron **16 parámetros técnicos reales** que cubren:
+  - **UX**: Validación contextual de formularios sin pérdida de datos, microcopys y estados vacíos asistidos, gestión respetuosa de notificaciones (Web API e iCalendar RFC 5545) y criterios de precisión financiera.
+  - **UI y Accesibilidad**: Cumplimiento WCAG 2.1 AA, compatibilidad responsive desde 320 px (tarjetas móviles vs. tabla de escritorio), componentes semánticos con anuncios `aria-live` y gestión de estado con flujo unidireccional.
+  - **Persistencia y Datos**: Arquitectura *Local-First* con `LocalStorage`, tolerancia offline al 100%, modelo de datos normalizado (OpenAPI 3.1), versionado de esquemas (`*_v1`) y copias de seguridad JSON completas.
+  - **Compilación y DevOps**: Monolito modular desacoplado en ES Modules, compilación y validación en contenedor Docker multi-stage (`node:24-bookworm-slim` con usuario no-root `node`), servidor HTTP nativo sin dependencias y protección contra ataques XSS y *Path Traversal*.
+- **GitNeitor**: Estandarizó y gestionó el control de versiones y la seguridad del repositorio:
+  - **Escaneo de Secretos (*Secret Scanning*)**: Auditoría preventiva de claves, tokens y archivos no autorizados previo a cualquier commit.
+  - **Commits Semánticos (*Conventional Commits*)**: Trazabilidad granular mediante mensajes tipificados (`feat`, `fix`, `test`, `chore`, `docs`).
+  - **Sincronización con GitHub**: Gobernanza de ramas (`main`) y enlace sincronizado con el repositorio remoto oficial [`Juan-V7/GeneradorPlantillaAhorro`](https://github.com/Juan-V7/GeneradorPlantillaAhorro).
 
 ---
 
