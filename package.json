@@ -3,10 +3,19 @@
   "version": "1.0.0",
   "description": "Aplicación web accesible y modular para planificar metas de ahorro programado a medida.",
   "main": "server.js",
+  "bin": "server.js",
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "test": "node --test tests/*.test.js"
+    "test": "node --test tests/*.test.js",
+    "build:win": "pkg server.js --targets node18-win-x64 --output release/GeneradorPlantillaAhorro-Portable.exe"
+  },
+  "pkg": {
+    "assets": [
+      "index.html",
+      "src/**/*",
+      "css/**/*"
+    ]
   },
   "keywords": [
     "ahorro",
@@ -19,5 +28,8 @@
   "license": "MIT",
   "engines": {
     "node": ">=20.0.0"
+  },
+  "devDependencies": {
+    "@yao-pkg/pkg": "^6.25.0"
   }
 }

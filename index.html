@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generador de Plantillas de Ahorro Programado</title>
+  <title>Generador de Plantillas de Ahorro Programado - One Piece Acid Edition</title>
   <meta name="description" content="Planifica tus metas de ahorro a medida, calcula cuotas exactas, gestiona recordatorios y exporta tus cronogramas de pago.">
   <link rel="stylesheet" href="css/styles.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👒</text></svg>">
 </head>
 <body>
   <!-- Salto accesible al contenido principal -->
@@ -19,10 +19,10 @@
   <header class="app-header" role="banner">
     <div class="header-container">
       <div class="brand-wrapper">
-        <span class="brand-icon" aria-hidden="true">🌱</span>
+        <span class="brand-icon" aria-hidden="true">👒</span>
         <div>
-          <h1 class="brand-title">Generador de Plantilla de Ahorro (COP)</h1>
-          <p class="brand-subtitle">Planificación de metas de ahorro en Pesos Colombianos &bull; Cuotas y recordatorios</p>
+          <h1 class="brand-title">Generador de Plantilla de Ahorro <span class="acid-tag">ONE PIECE ACID</span></h1>
+          <p class="brand-subtitle">⚡ RUMBO AL GRAND LINE &bull; TESORO Y CUOTAS EN BERRIES (COP) 🍖</p>
         </div>
       </div>
       <div class="header-actions">
@@ -34,7 +34,7 @@
         <!-- Modal de Copias de Seguridad -->
         <button id="btn-open-backup" class="btn btn-outline-white btn-sm" aria-label="Abrir gestor de copias de seguridad">
           <span aria-hidden="true">💾</span>
-          <span>Copias de Respaldo</span>
+          <span>Poneglyph Backup</span>
         </button>
       </div>
     </div>
@@ -177,13 +177,13 @@
 
         <!-- Mensaje de Estado Vacío (se oculta cuando hay un plan activo) -->
         <div id="empty-state-view" class="empty-state">
-          <div class="empty-state-icon" aria-hidden="true">💡</div>
-          <h2 class="empty-state-title">Comienza tu primera meta de ahorro</h2>
+          <div class="empty-state-icon" aria-hidden="true">🍖</div>
+          <h2 class="empty-state-title">¡Zarpa hacia tu Meta, Pirata!</h2>
           <p class="empty-state-desc">
-            Define tu monto objetivo, el plazo y la periodicidad en el formulario de la izquierda. El sistema calculará automáticamente tus cuotas exactas, fechas de cobro y tabla de progreso.
+            Define tu botín objetivo, el plazo y la periodicidad de tus aportes en Berries (COP). El sistema trazará tu ruta exacta en el Grand Line calculando cuotas exactas y recordatorios automáticos.
           </p>
           <button id="btn-empty-focus" class="btn btn-primary">
-            <span aria-hidden="true">✍️</span> Comenzar ahora
+            <span aria-hidden="true">⚓</span> ¡Comenzar Travesía!
           </button>
         </div>
 
@@ -196,22 +196,22 @@
           <!-- Métricas del Plan -->
           <div class="metrics-grid">
             <div class="metric-card">
-              <span class="metric-label">Ahorrado</span>
+              <span class="metric-label">💰 Botín Ahorrado</span>
               <span id="metric-saved" class="metric-value">$ 0.00</span>
               <span id="metric-saved-sub" class="metric-sub">0 de 0 cuotas</span>
             </div>
             <div class="metric-card secondary">
-              <span class="metric-label">Saldo Pendiente</span>
+              <span class="metric-label">⏳ Por Conquistar</span>
               <span id="metric-remaining" class="metric-value">$ 0.00</span>
               <span id="metric-target-sub" class="metric-sub">Meta: $ 0.00</span>
             </div>
             <div class="metric-card warning">
-              <span class="metric-label">Próximo Pago</span>
+              <span class="metric-label">🍖 Próximo Abono</span>
               <span id="metric-next-amount" class="metric-value">$ 0.00</span>
               <span id="metric-next-date" class="metric-sub">Sin pagos pendientes</span>
             </div>
             <div class="metric-card info">
-              <span class="metric-label">Fecha Límite</span>
+              <span class="metric-label">🏁 Rumbo a Laugh Tale</span>
               <span id="metric-end-date" class="metric-value">--/--/----</span>
               <span id="metric-frequency-sub" class="metric-sub">Periodicidad</span>
             </div>
@@ -220,7 +220,7 @@
           <!-- Barra de Progreso -->
           <div class="card" style="padding: 1rem;">
             <div class="progress-header">
-              <span>Progreso de la Meta</span>
+              <span>⚡ Conquista de la Meta</span>
               <span id="progress-text">0%</span>
             </div>
             <div class="progress-bar-track">

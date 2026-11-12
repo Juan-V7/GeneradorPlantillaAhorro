@@ -1,0 +1,7 @@
+{
+  "assets": [
+    "index.html",
+    "src/**/*",
+    "css/**/*"
+  ]
+}

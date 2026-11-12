@@ -1,0 +1,13 @@
+# Dependencias
+node_modules/
+
+# Binarios y compilaciones de lanzamiento
+release/
+
+# Logs del sistema
+*.log
+npm-debug.log*
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db

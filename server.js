@@ -10,9 +10,11 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { exec } from 'node:child_process';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Compatibilidad universal para ESM y empaquetado en snapshot pkg (CommonJS)
+const appFilename = typeof __filename !== 'undefined' ? __filename : fileURLToPath(import.meta.url);
+const appDirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(appFilename);
 
 const PORT = parseInt(process.env.PORT || '3000', 10);
 const HOST = process.env.HOST || '0.0.0.0';
@@ -65,13 +67,18 @@ export function createServer() {
       return;
     }
 
-    // Prevención de Directory Traversal
-    const safePath = path.normalize(pathname).replace(/^(\.\.[/\\])+/, '');
-    let filePath = path.join(__dirname, safePath);
+    // Prevención de Directory Traversal y resolución de rutas relativas al snapshot
+    let filePath;
+    if (pathname === '/' || pathname === '') {
+      filePath = path.join(appDirname, 'index.html');
+    } else {
+      const safePath = path.normalize(pathname).replace(/^(\.\.[/\\])+/, '');
+      filePath = path.join(appDirname, safePath);
 
-    // Si la ruta solicitada es un directorio, servir index.html
-    if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
-      filePath = path.join(filePath, 'index.html');
+      // Si la ruta solicitada es un directorio, servir index.html
+      if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
+        filePath = path.join(filePath, 'index.html');
+      }
     }
 
     // Comprobar si el archivo existe
@@ -106,16 +113,63 @@ export function createServer() {
   });
 }
 
-// Iniciar servidor automáticamente si se ejecuta como proceso principal
-const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
+// Iniciar servidor automáticamente si se ejecuta como proceso principal o binario pkg
+const isPkg = typeof process.pkg !== 'undefined';
+const isMain = isPkg || (process.argv[1] && appFilename === process.argv[1]);
 let defaultServer = null;
+
+function startListenWithRetry(server, initialPort, host, maxAttempts = 10) {
+  let currentPort = initialPort;
+  let attempts = 0;
+
+  function tryListen() {
+    server.once('error', (err) => {
+      if (err.code === 'EADDRINUSE') {
+        attempts++;
+        if (attempts < maxAttempts) {
+          console.warn(`[GeneradorPlantillaAhorro] Puerto ${currentPort} en uso. Intentando en ${currentPort + 1}...`);
+          currentPort++;
+          setTimeout(tryListen, 250);
+          return;
+        }
+      }
+      console.error(`[GeneradorPlantillaAhorro] Error al iniciar servidor: ${err.message}`);
+    });
+
+    server.listen(currentPort, host, () => {
+      const localUrl = `http://localhost:${currentPort}`;
+      console.log(`================================================================`);
+      console.log(` 💰 [GeneradorPlantillaAhorro] Aplicación Iniciada con Éxito`);
+      console.log(` 🌐 Dirección en tu navegador: ${localUrl}`);
+      console.log(` 🩺 Verificación (Health):    ${localUrl}/health`);
+      console.log(`================================================================`);
+      console.log(` Mantén esta ventana abierta mientras uses la aplicación.`);
+      console.log(` Para salir, presiona Ctrl + C o cierra esta ventana.`);
+      console.log(`================================================================`);
+
+      // Apertura automática del navegador predeterminado
+      if (process.env.OPEN_BROWSER !== 'false') {
+        const openCmd = process.platform === 'win32'
+          ? `start ${localUrl}`
+          : process.platform === 'darwin'
+            ? `open "${localUrl}"`
+            : `xdg-open "${localUrl}"`;
+
+        exec(openCmd, (err) => {
+          if (!err) {
+            console.log(` [GeneradorPlantillaAhorro] Navegador web abierto automáticamente.`);
+          }
+        });
+      }
+    });
+  }
+
+  tryListen();
+}
 
 if (isMain) {
   defaultServer = createServer();
-  defaultServer.listen(PORT, HOST, () => {
-    console.log(`[GeneradorPlantillaAhorro] Servidor iniciado con éxito en http://localhost:${PORT}`);
-    console.log(`[GeneradorPlantillaAhorro] Healthcheck disponible en http://localhost:${PORT}/health`);
-  });
+  startListenWithRetry(defaultServer, PORT, HOST);
 
   process.on('SIGINT', () => {
     console.log('\n[GeneradorPlantillaAhorro] Apagando servidor...');
