@@ -66,7 +66,11 @@ GeneradorPlantillaAhorro/
 ├── .dockerignore                # Optimización de contexto Docker
 ├── package.json                 # Scripts de prueba y arranque
 ├── SKILLS.md                    # Especificación técnica base generada con SkillNeitor
-└── RELACION_SKILLNEITOR_GITNEITOR.md # Documentación técnica del flujo SkillNeitor y GitNeitor
+├── RELACION_SKILLNEITOR_GITNEITOR.md # Documentación técnica del flujo SkillNeitor y GitNeitor
+└── docs/
+    ├── MANUAL_TECNICO.md        # Arquitectura, APIs, persistencia y lógica
+    ├── MANUAL_USUARIO.md        # Guía de uso para usuario final y exportación
+    └── MANUAL_DESPLIEGUE.md     # Instalación, Docker y versión portable Windows
 ```
 
 ---
@@ -141,6 +145,16 @@ npm test
 ## 📄 Contrato de Datos (OpenAPI)
 
 El archivo [`openapi.yaml`](openapi.yaml) define el esquema de los planes de ahorro (`SavingsPlan`), cuotas (`Installment`), métricas y los endpoints de verificación del servidor.
+
+---
+
+## 📖 Manuales del Sistema
+
+El proyecto cuenta con documentación técnica y operativa exhaustiva estructurada en tres manuales independientes disponibles en el directorio [`docs/`](./docs/):
+
+* 🛠️ **[Manual Técnico](./docs/MANUAL_TECNICO.md)**: Arquitectura del sistema (Monolito Modular ES6 y Local-First), stack tecnológico, especificación de endpoints y contratos OpenAPI 3.1.0 (`/health`, `/api/v1/info`), modelos de datos normalizados, estrategia de almacenamiento y algoritmos de cómputo financiero.
+* 👤 **[Manual de Usuario](./docs/MANUAL_USUARIO.md)**: Guía completa paso a paso para el usuario final, descripción de campos y vistas interactivas (modo claro/oscuro), validaciones, lógica de cuotas y ajuste de céntimos, registro diario de abonos, alertas de cobro, sincronización con calendarios (.ics) y exportación a Excel, PDF y WhatsApp.
+* 🚀 **[Manual de Despliegue](./docs/MANUAL_DESPLIEGUE.md)**: Requisitos del sistema, verificación de dependencias nativas en `package.json`, ejecución local con Node.js (`server.js`), despliegue con Docker multi-stage (usuario no-root y healthcheck), Docker Compose y compilación de versión portable para Windows (binario `.exe` y paquete portable `.bat`).
 
 ---
 
